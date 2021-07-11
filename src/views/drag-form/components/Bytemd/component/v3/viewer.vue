@@ -26,17 +26,18 @@ export default defineComponent({
     const markdownBody = ref<any>(null);
     const on = () => {
       if (props.plugins && file) {
-        cbs.value = props.plugins.map(
+        cbs.value = props.plugins
+          .map
           ({ viewerEffect }) => viewerEffect && viewerEffect({ markdownBody: this.$el, file: this.file })
-        );
+          ();
       }
     };
     const off = () => {
       if (cbs.value) {
-        cbs.value.forEach((cb) => cb && cb());
+        cbs.value.forEach((cb: any) => cb && cb());
       }
     };
-    const handleClick = (e) => {
+    const handleClick = (e: any) => {
       const $ = e.target;
       if ($.tagName !== 'A') return;
 

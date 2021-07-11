@@ -44,10 +44,19 @@
           </a-form-item>
         </template>
       </template>
-      <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-        <a-button type="primary" @click="onSubmit">提交</a-button>
-        <a-button style="margin-left: 10px">重置</a-button>
-      </a-form-item>
+      <a-form v-if="currentIdFormAttr?.__attr__?.length && currentIdFormAttr.submitBtns">
+        <a-form-item class="submit-btns" :wrapper-col="{ span: 14, offset: 4 }">
+          <div class="flex" :class="`flex-align-${currentIdFormAttr.btnsAlign}`">
+            <a-button type="primary">{{ currentIdFormAttr.confirmText }}</a-button>
+            <a-button style="margin-left: 10px" v-if="currentIdFormAttr.cancel">
+              {{ currentIdFormAttr.cancelText }}
+            </a-button>
+            <a-button style="margin-left: 10px" v-if="currentIdFormAttr.reset">
+              {{ currentIdFormAttr.resetText }}
+            </a-button>
+          </div>
+        </a-form-item>
+      </a-form>
     </a-form>
   </div>
 </template>

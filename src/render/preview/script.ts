@@ -1,9 +1,17 @@
 /* eslint-disable quotes */
+import { AntdvComponentOptions } from '@/types/drag-form/component-options';
 import { FormOptions } from '@/types/drag-form/forms';
 import { getAccessType } from '@/utils';
 import { RuleItem } from 'async-validator';
 
 let currentIdFormAttr: FormOptions;
+let needImport: `a-${keyof AntdvComponentOptions}`[];
+
+const scriptStringInit = (params: FormOptions) => {
+  currentIdFormAttr = params;
+  needImport = currentIdFormAttr.__attr__.map((item) => item.component);
+  parseFormModel();
+};
 // TODO
 /**
  * 判断是ts还是js
@@ -22,8 +30,40 @@ ${value}
 /**
  * 一系列的import
  */
-const importString = `import { defineComponent, reactive, ref, toRaw, UnwrapRef } from 'vue';
+const importString = () => {
+  let importStr = `import { defineComponent, reactive, ref, toRaw, UnwrapRef } from 'vue';
 import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';`;
+  if (needImport.includes('a-Bytemd')) {
+    // 换行
+    importStr += `\nimport Bytemd from '@/components/Bytemd/editor.vue'`;
+  }
+  if (needImport.includes('a-Tinymce')) {
+    importStr += `\nimport Tinymce from '@/components/Tinymce.vue'`;
+  }
+  return importStr;
+};
+
+/**
+ * 组件处理
+ * @returns
+ */
+const componentString = () => {
+  const componentStr = (comp: string) => {
+    return `\n  components: {
+    ${comp}
+  },`;
+  };
+  let comp = '';
+  if (needImport.includes('a-Tinymce')) {
+    comp += `'a-Tinymce': Tinymce`;
+  }
+  console.log(comp, componentStr(comp));
+  if (needImport.includes('a-Bytemd')) {
+    if (comp !== '') comp += ',\n';
+    comp += `    'a-Bytemd': Bytemd`;
+  }
+  return comp === '' ? '' : componentStr(comp);
+};
 
 const typescriptTypeObject: Record<string, any> = {};
 /**
@@ -57,7 +97,6 @@ const parseFormModel = () => {
  * ts声明的类型
  */
 const typescriptTypeString = () => {
-  console.log(typescriptTypeObject);
   return `
 interface FormModelType ${JSON.stringify(typescriptTypeObject, null, 2)
     .replace(/"/g, '')
@@ -80,10 +119,10 @@ const resetString = () => {
  * 导出的js模板模块
  */
 const scriptString = () => {
-  return `${importString}
+  return `${importString()}
 ${typescriptTypeString()}
 
-export default defineComponent({
+export default defineComponent({${componentString()}
   setup() {
     const formRef = ref();
 
@@ -127,7 +166,6 @@ export default defineComponent({
 };
 
 export const script = (params: FormOptions) => {
-  currentIdFormAttr = params;
-  parseFormModel();
+  scriptStringInit(params);
   return lang(scriptString(), 'ts');
 };

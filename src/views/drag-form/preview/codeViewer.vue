@@ -54,8 +54,8 @@ export default defineComponent({
         colorDecorators: true, // 颜色装饰器
         accessibilitySupport: 'off', // 辅助功能支持  "auto" | "off" | "on"
         lineNumbers: 'on', // 行号 取值： "on" | "off" | "relative" | "interval" | function
-        lineNumbersMinChars: 5, // 行号最小字符   number
-        wordWrap: 'on'
+        lineNumbersMinChars: 5 // 行号最小字符   number
+        // wordWrap: 'on'
         // readOnly: true
       });
       spinning.value = false;
