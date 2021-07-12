@@ -151,10 +151,6 @@ img {
   border: 0;
 }
 
-li {
-  list-style-type: none;
-}
-
 svg:not(:root) {
   overflow: hidden;
 }

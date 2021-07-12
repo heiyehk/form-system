@@ -67,7 +67,7 @@ import { useRoute } from 'vue-router';
 import { getMakingIdFormAttr } from '@/config/drag-form/reactiveFormOptions';
 import Tinymac from '../components/Tinymce.vue';
 import Bytemd from '../components/Bytemd/component/v3/editor.vue';
-import 'bytemd/dist/index.min.css';
+// import 'bytemd/dist/index.min.css';
 import { RuleItem } from 'async-validator';
 
 export default defineComponent({

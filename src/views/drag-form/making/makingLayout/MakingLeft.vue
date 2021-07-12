@@ -65,6 +65,7 @@ export default defineComponent({
   padding: 0 20px;
   box-sizing: border-box;
   li {
+    list-style: none;
     width: calc(50% - 10px);
     margin: 5px;
     background-color: @background-color !important;

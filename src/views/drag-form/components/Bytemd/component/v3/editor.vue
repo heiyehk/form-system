@@ -12,8 +12,8 @@ import gfm from '@bytemd/plugin-gfm';
 // import highlights from '@bytemd/plugin-highlight';
 import highlights from '@bytemd/plugin-highlight-ssr';
 // import mediumZoom from '@bytemd/plugin-medium-zoom';
-import 'bytemd/dist/index.min.css';
-import 'highlight.js/styles/default.css';
+// import 'bytemd/dist/index.min.css';
+// import 'highlight.js/styles/default.css';
 
 const plugins = [
   gfm({
@@ -40,7 +40,7 @@ export default defineComponent({
     },
     uploadImages: Function
   },
-  emits: ['update:value'],
+  emits: ['update:value', 'change'],
   setup(props, { emit }) {
     const editorRef = ref(null);
     const editorEditor = ref<any>(null);
@@ -70,6 +70,7 @@ export default defineComponent({
       });
       editor.$on('change', (e: any) => {
         emit('update:value', e.detail.value);
+        emit('change', e.detail.value);
       });
       editorEditor.value = editor;
     });

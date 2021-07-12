@@ -1,65 +1,74 @@
 <template>
-  <div ref="markdownBody" class="markdown-body" v-html="file" @click="handleClick($event)"></div>
+  <div ref="viewerRef" class="markdown-body" v-html="file" @click="handleClick"></div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, watch, onMounted, ref, onBeforeUnmount } from 'vue';
+import { computed, defineComponent, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { getProcessor } from 'bytemd';
 
 export default defineComponent({
   props: ['value', 'plugins', 'sanitize'],
   setup(props) {
+    const cbs = ref();
+    const viewerRef = ref();
     const file = computed(() => {
       return getProcessor(props).processSync(props.value);
     });
-    // const needUpdate = computed(() => {
-    //   return [file, this.plugins, this.sanitize];
-    // });
-    // watch(() => needUpdate, () => {
+    const needUpdate = computed(() => {
+      return [file, props.plugins, props.sanitize];
+    });
 
-    //   this.off();
-    //     this.$nextTick(() => {
-    //       this.on();
-    //     });
-    // })；
-    const cbs = ref<any>(null);
-    const markdownBody = ref<any>(null);
+    watch(
+      () => needUpdate.value,
+      () => {
+        off();
+        nextTick(() => {
+          on();
+        });
+      },
+      {
+        deep: true
+      }
+    );
+
+    onMounted(() => {
+      on();
+    });
+
+    onUnmounted(() => {
+      off();
+    });
+
     const on = () => {
       if (props.plugins && file) {
-        cbs.value = props.plugins
-          .map
-          ({ viewerEffect }) => viewerEffect && viewerEffect({ markdownBody: this.$el, file: this.file })
-          ();
+        cbs.value = props.plugins.map((plugin: any) => {
+          const viewerEffect = plugin.viewerEffect;
+          return viewerEffect && viewerEffect({ markdownBody: viewerRef.value, file });
+        });
+        console.log(cbs.value);
       }
     };
+
     const off = () => {
       if (cbs.value) {
-        cbs.value.forEach((cb: any) => cb && cb());
+        cbs.value.forEach((cb?: Function) => cb && cb());
       }
     };
-    const handleClick = (e: any) => {
-      const $ = e.target;
+    const handleClick = (e?: Event) => {
+      const $ = e?.target as Element;
       if ($.tagName !== 'A') return;
 
       const href = $.getAttribute('href');
       if (!href || !href.startsWith('#')) return;
 
-      const dest = markdownBody.value.querySelector('#user-content-' + href.slice(1));
+      const dest = viewerRef.value.querySelector('#user-content-' + href.slice(1));
       if (dest) dest.scrollIntoView();
     };
-    onMounted(() => {
-      on();
-    });
-    onBeforeUnmount(() => {
-      off();
-    });
     return {
-      markdownBody,
-      handleClick,
-      file
+      viewerRef,
+      file,
+      handleClick
     };
   }
 });
 </script>
-
-<style lang="less" scoped></style>

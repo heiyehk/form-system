@@ -92,7 +92,7 @@ import { randomChar, uuid } from '@/utils';
 import { formsOptions } from '@/config/drag-form/reactiveFormOptions';
 import { componentAttrOptions } from '@/config/drag-form/formJsonComponent';
 
-import 'bytemd/dist/index.min.css';
+// import 'bytemd/dist/index.min.css';
 import { FormItemComponentAttr } from '@/types/drag-form/forms';
 import { AntdvComponentOptions } from '@/types/drag-form/component-options';
 import { RuleItem } from 'async-validator';

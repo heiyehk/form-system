@@ -7,31 +7,19 @@
     :scrollToFirstError="false"
     validateTrigger="change"
     :hideRequiredMark="false"
-    :labelCol="{ span: 4 }"
+    :labelCol="{ span: 2 }"
     labelAlign="right"
     layout="horizontal"
   >
-    <a-form-item label="单行">
-      <a-Input
-        v-model:value="formModel.compo0g"
-        size="small"
-        :disabled="false"
-        :allowClear="true"
-        placeholder="请输入内容"
+    <a-form-item label="markdown" name="compv03">
+      <a-Bytemd @change="change" v-model:value="formModel.compv03" size="default" :disabled="false"
     /></a-form-item>
-    <a-form-item label="单行" name="comp4uh">
-      <a-Input
-        v-model:value="formModel.comp4uh"
-        size="small"
-        :disabled="false"
-        :allowClear="true"
-        placeholder="请输入内容"
-    /></a-form-item>
-    <a-form-item label="开关" name="comp50h">
-      <a-Switch v-model:checked="formModel.comp50h" size="small" :disabled="false" :loading="false"
+    <a-form-item label="markdown" name="compv03">
+      <Viewer v-model:value="formModel.compv03" size="default" :disabled="false"
     /></a-form-item>
     <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
       <a-button type="primary" @click="onSubmit">提交</a-button>
+      <a-button style="margin-left: 10px">重置</a-button>
     </a-form-item>
   </a-form>
 </template>
@@ -39,14 +27,18 @@
 <script lang="ts">
 import { defineComponent, reactive, ref, toRaw, UnwrapRef } from 'vue';
 import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
+import Bytemd from './components/Bytemd/component/v3/editor.vue';
+import Viewer from './components/Bytemd/component/v3/viewer.vue';
 
 interface FormModelType {
-  compo0g: string;
-  comp4uh: string;
-  comp50h: undefined | string;
+  compv03: string;
 }
 
 export default defineComponent({
+  components: {
+    'a-Bytemd': Bytemd,
+    Viewer
+  },
   setup() {
     const formRef = ref();
 
@@ -54,31 +46,17 @@ export default defineComponent({
      * 表单model
      */
     const formModel: UnwrapRef<FormModelType> = reactive({
-      compo0g: '',
-      comp4uh: '',
-      comp50h: undefined
+      compv03: ''
     });
 
     /**
      * 表单rules验证
      */
     const formRules = reactive({
-      compo0g: [
+      compv03: [
         {
           required: true,
-          message: '请输入单行'
-        }
-      ],
-      comp4uh: [
-        {
-          required: true,
-          message: '请输入单行'
-        }
-      ],
-      comp50h: [
-        {
-          required: true,
-          message: '请输入开关'
+          message: '请输入markdown'
         }
       ]
     });
@@ -97,11 +75,16 @@ export default defineComponent({
         });
     };
 
+    const change = (value: string) => {
+      console.log(value);
+    };
+
     return {
       formRef,
       formModel,
       formRules,
-      onSubmit
+      onSubmit,
+      change
     };
   }
 });
