@@ -6,6 +6,21 @@ import myExample from './script/rollup-plugin-my-example';
 
 const resolve = (dir: string) => path.join(__dirname, dir);
 
+const external = {
+  vue: 'Vue',
+  'vue-router': 'VueRouter',
+  vuex: 'Vuex',
+  'ant-design-vue': 'antd',
+  lodash: '_',
+  axios: 'axios',
+  sortablejs: 'Sortable',
+  tinymce: 'tinyMCE',
+  bytemd: 'bytemd',
+  '@bytemd/plugin-gfm': 'bytemdPluginGfm',
+  '@bytemd/plugin-highlight-ssr': 'bytemdPluginHighlightSsr'
+};
+const externalKey = Object.keys(external);
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -26,19 +41,10 @@ export default defineConfig({
   build: {
     rollupOptions: {
       // 请确保外部化那些你的库中不需要的依赖
-      external: ['vue', 'vue-router', 'vuex', 'lodash', 'axios', 'sortablejs', 'tinymce', 'bytemd'],
+      external: externalKey,
       output: {
         // 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量
-        globals: {
-          vue: 'Vue',
-          'vue-router': 'VueRouter',
-          vuex: 'Vuex',
-          lodash: '_',
-          axios: 'axios',
-          sortablejs: 'Sortable',
-          tinymce: 'tinyMCE',
-          bytemd: 'bytemd'
-        }
+        globals: external
       }
     }
   },

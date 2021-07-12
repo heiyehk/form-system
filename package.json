@@ -7,10 +7,11 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "@ant-design-vue/use": "^0.0.1-alpha.10",
     "@ant-design/icons-vue": "^6.0.1",
     "@bytemd/plugin-gfm": "^1.9.2",
     "@bytemd/plugin-highlight-ssr": "^1.10.2",
-    "ant-design-vue": "^2.2.0-beta.3",
+    "ant-design-vue": "2.2.2",
     "axios": "^0.21.1",
     "bytemd": "^1.10.8",
     "lodash": "^4.17.21",

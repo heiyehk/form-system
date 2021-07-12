@@ -9,13 +9,13 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, onUnmounted, PropType } from 'vue';
 import tinymce from 'tinymce';
-import 'tinymce/themes/silver';
-import 'tinymce/plugins/fullscreen';
-import 'tinymce/plugins/preview';
-import 'tinymce/plugins/table';
-import 'tinymce/plugins/image';
-import 'tinymce/plugins/imagetools';
-import 'tinymce/plugins/link';
+// import 'tinymce/themes/silver';
+// import 'tinymce/plugins/fullscreen';
+// import 'tinymce/plugins/preview';
+// import 'tinymce/plugins/table';
+// import 'tinymce/plugins/image';
+// import 'tinymce/plugins/imagetools';
+// import 'tinymce/plugins/link';
 import { message } from 'ant-design-vue';
 
 export default defineComponent({
@@ -83,6 +83,7 @@ export default defineComponent({
           placeholder: props.placeholder,
           selector: 'textarea.editor',
           language: 'zh_CN',
+          language_url: '/langs/zh_CN.js',
           width: props.width,
           height: props.height,
           theme: 'silver',
