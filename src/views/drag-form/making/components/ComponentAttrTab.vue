@@ -384,6 +384,46 @@
           </a-radio-group>
         </a-form-item>
       </template>
+      <template v-if="currentIdComponentAttr.component === 'a-Upload'">
+        <a-form-item label="文件类型">
+          <a-select placeholder="请选择文件类型" v-model:value="currentIdComponentAttr.options.props.accept">
+            <template v-for="item in uploadAccept" :key="item">
+              <a-select-option :value="item.value">{{ item.label }}</a-select-option>
+            </template>
+          </a-select>
+        </a-form-item>
+        <a-form-item label="文件name">
+          <a-input v-model:value="currentIdComponentAttr.options.props.name" />
+        </a-form-item>
+        <a-form-item label="上传地址">
+          <a-input v-model:value="currentIdComponentAttr.options.props.action" />
+        </a-form-item>
+        <a-form-item label="写代cookie">
+          <a-switch v-model:checked="currentIdComponentAttr.options.props.withCredentials" />
+        </a-form-item>
+        <a-form-item label="文件夹">
+          <a-switch v-model:checked="currentIdComponentAttr.options.props.directory" />
+        </a-form-item>
+        <a-form-item label="多选">
+          <a-switch v-model:checked="currentIdComponentAttr.options.props.multiple" />
+        </a-form-item>
+        <a-form-item label="文件对话框">
+          <a-switch v-model:checked="currentIdComponentAttr.options.props.openFileDialogOnClick" />
+        </a-form-item>
+        <a-form-item label="请求头">
+          <InputOptions oneplaceholder="key" twoplaceholder="value" />
+        </a-form-item>
+        <a-form-item label="样式">
+          <a-radio-group v-model:value="currentIdComponentAttr.options.props.listType" button-style="solid">
+            <a-radio-button value="text">文本</a-radio-button>
+            <a-radio-button value="picture">图垂直</a-radio-button>
+            <a-radio-button value="picture-card">图水平</a-radio-button>
+          </a-radio-group>
+        </a-form-item>
+        <a-form-item label="显示列表">
+          <a-switch v-model:checked="currentIdComponentAttr.options.props.showUploadList" />
+        </a-form-item>
+      </template>
     </template>
   </a-form>
 </template>
@@ -395,10 +435,12 @@ import { computed, defineComponent } from 'vue';
 import { QuestionCircleOutlined } from '@ant-design/icons-vue';
 import { RightFormAttrType, FormItemComponentAttr } from '@/types/drag-form/forms';
 import moment from 'moment';
+import InputOptions from '../../components/InputOptions.vue';
 
 export default defineComponent({
   components: {
-    QuestionCircleOutlined
+    QuestionCircleOutlined,
+    InputOptions
   },
   props: {
     makingId: String,
@@ -424,13 +466,41 @@ export default defineComponent({
       'rightTop',
       'rightBottom'
     ];
+
+    const uploadAccept = [
+      {
+        label: '图片',
+        value: 'image/*'
+      },
+      {
+        label: '音频',
+        value: 'audio/*'
+      },
+      {
+        label: '表格',
+        value: '.xls,.xlsx'
+      },
+      {
+        label: '表格',
+        value: '.xls,.xlsx'
+      },
+      {
+        label: 'word',
+        value: '.doc,.docx'
+      },
+      {
+        label: 'pdf',
+        value: '.pdf'
+      }
+    ];
     return {
-      labelCol: { span: 8 },
-      wrapperCol: { span: 14 },
+      labelCol: { span: 7 },
+      wrapperCol: { span: 15 },
       currentIdFormAttr,
       currentIdComponentAttr,
       simpleImage: Empty.PRESENTED_IMAGE_SIMPLE,
       tooltipPlacement,
+      uploadAccept,
       moment
     };
   }

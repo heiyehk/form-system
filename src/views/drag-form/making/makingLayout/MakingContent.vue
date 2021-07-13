@@ -50,6 +50,15 @@
                   :size="currentIdFormAttr.size"
                 />
                 <component
+                  v-else-if="item.component === 'a-Upload'"
+                  :is="item.component"
+                  v-bind="item.options.props"
+                  v-model:checked="item.options.props.checked"
+                  :size="currentIdFormAttr.size"
+                >
+                  <a-button><UploadOutlined />上传</a-button>
+                </component>
+                <component
                   v-else
                   :is="item.component"
                   v-bind="item.options.props"
@@ -83,7 +92,7 @@
 import { computed, defineComponent, onMounted, ref } from 'vue';
 import Sortable from 'sortablejs';
 import { Empty } from 'ant-design-vue';
-import { DeleteOutlined, CopyOutlined } from '@ant-design/icons-vue';
+import { DeleteOutlined, CopyOutlined, UploadOutlined } from '@ant-design/icons-vue';
 import { cloneDeep } from 'lodash';
 import Tinymac from '../../components/Tinymce.vue';
 import Bytemd from '../../components/Bytemd/component/v3/editor.vue';
@@ -104,7 +113,8 @@ export default defineComponent({
     'a-Tinymce': Tinymac,
     'a-Bytemd': Bytemd,
     CopyOutlined,
-    DeleteOutlined
+    DeleteOutlined,
+    UploadOutlined
   },
   setup(props, { emit }) {
     const cacheFormRulesrules = computed(() => {
@@ -269,7 +279,7 @@ export default defineComponent({
       display: none;
       cursor: pointer;
     }
-    .anticon {
+    .absolute-btns .anticon {
       color: @base-color;
       font-size: 16px;
       margin-left: 10px;

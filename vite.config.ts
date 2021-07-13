@@ -7,17 +7,17 @@ import myExample from './script/rollup-plugin-my-example';
 const resolve = (dir: string) => path.join(__dirname, dir);
 
 const external = {
-  vue: 'Vue',
-  'vue-router': 'VueRouter',
-  vuex: 'Vuex',
+  '@bytemd/plugin-gfm': 'bytemdPluginGfm',
+  '@bytemd/plugin-highlight-ssr': 'bytemdPluginHighlightSsr',
   'ant-design-vue': 'antd',
-  lodash: '_',
   axios: 'axios',
+  bytemd: 'bytemd',
+  lodash: '_',
   sortablejs: 'Sortable',
   tinymce: 'tinyMCE',
-  bytemd: 'bytemd',
-  '@bytemd/plugin-gfm': 'bytemdPluginGfm',
-  '@bytemd/plugin-highlight-ssr': 'bytemdPluginHighlightSsr'
+  vue: 'Vue',
+  'vue-router': 'VueRouter',
+  vuex: 'Vuex'
 };
 const externalKey = Object.keys(external);
 
