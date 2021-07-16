@@ -1,14 +1,14 @@
 <template>
   <div class="tinymce-editor">
     <a-spin :spinning="spinning">
-      <textarea class="editor"></textarea>
+      <textarea :id="id"></textarea>
     </a-spin>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, onMounted, onUnmounted, PropType } from 'vue';
-import tinymce from 'tinymce';
+import tinymce, { Editor } from 'tinymce';
 // import 'tinymce/themes/silver';
 // import 'tinymce/plugins/fullscreen';
 // import 'tinymce/plugins/preview';
@@ -17,6 +17,7 @@ import tinymce from 'tinymce';
 // import 'tinymce/plugins/imagetools';
 // import 'tinymce/plugins/link';
 import { message } from 'ant-design-vue';
+import { randomChar } from '@/utils';
 
 export default defineComponent({
   props: {
@@ -75,13 +76,15 @@ export default defineComponent({
   emits: ['update:value'],
   setup(props, { emit }) {
     const spinning = ref(true);
+    const tinymceEditor = ref<Editor | null>(null);
+    const id = randomChar('id');
+    console.log(id);
 
     const initEditor = async () => {
-      console.log(props.value);
       tinymce
         .init({
           placeholder: props.placeholder,
-          selector: 'textarea.editor',
+          selector: `#${id}`,
           language: 'zh_CN',
           language_url: '/langs/zh_CN.js',
           width: props.width,
@@ -100,9 +103,13 @@ export default defineComponent({
           //   console.log(blobInfo.blob());
           // }
         })
-        .then(() => {
+        .then((editor) => {
           // 加载完毕时赋值一次
           tinymce.activeEditor.setContent(props.value);
+          tinymceEditor.value = editor[0];
+          editor[0].on('input', () => {
+            emit('update:value', tinymce.activeEditor.getContent());
+          });
         })
         .finally(() => {
           spinning.value = false;
@@ -113,10 +120,6 @@ export default defineComponent({
             title: '编辑器初始化出错!'
           });
         });
-      tinymce.activeEditor.on('input', () => {
-        console.log(tinymce.activeEditor.getContent());
-        emit('update:value', tinymce.activeEditor.getContent());
-      });
     };
     onMounted(async () => {
       await initEditor();
@@ -124,10 +127,12 @@ export default defineComponent({
 
     onUnmounted(() => {
       tinymce.activeEditor?.destroy();
+      tinymceEditor.value = null;
     });
 
     return {
-      spinning
+      spinning,
+      id
     };
   }
 });

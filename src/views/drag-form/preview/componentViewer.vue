@@ -25,7 +25,7 @@
               span: item.options.wrapperColSpan ?? 24
             }"
             :label="item.options.label ? item.label : ''"
-            :name="item.required ? item.key : ''"
+            :name="item.required ? item._key : ''"
           >
             <component
               v-if="item.component === 'a-Switch'"
@@ -81,7 +81,9 @@ export default defineComponent({
     const cacheFormRulesrules = computed(() => {
       let rules: Partial<Record<string, RuleItem[]>> = {};
       for (const item of currentIdFormAttr.__attr__) {
-        rules[item.key] = item.rules;
+        if (item.required) {
+          rules[item._key] = item.rules;
+        }
       }
       return rules;
     });

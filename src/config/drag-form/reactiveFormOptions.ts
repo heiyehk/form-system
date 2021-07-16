@@ -23,6 +23,6 @@ watch(
  * @param {string} id
  * @returns {FormItemComponentAttr} FormItemComponentAttr
  */
-const getMakingIdFormAttr = (id: string) => formsOptions.value.filter((item) => item.id === id)[0];
+const getMakingIdFormAttr = (id: string) => formsOptions.value.filter((item) => item._id === id)[0];
 
 export { formsOptions, getMakingIdFormAttr };

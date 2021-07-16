@@ -176,10 +176,10 @@ export const ieIE = (): boolean => navigator.userAgent.toLowerCase().indexOf('tr
  * 随机字符
  * @returns
  */
-export const randomChar = (substr?: number) => {
+export const randomChar = (fix = '', substr?: number) => {
   const str = Math.random().toString(32).replace('0.', '');
-  if (!substr) return str;
-  return str.substr(0, substr);
+  if (!substr) return fix + str;
+  return fix + str.substr(0, substr);
 };
 
 /**

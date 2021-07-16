@@ -4,7 +4,7 @@
       <a-divider>{{ item.title }}</a-divider>
       <ul class="component-list flex">
         <template v-for="component in item.components" :key="component.component">
-          <li :title="component.component" :data-component="component.component" :data-name="component.name">
+          <li :title="component.component" :data-component="component.component" :data-label="component.name">
             <template v-if="component.tips">
               <a-tooltip placement="bottom">
                 <template #title>{{ component.tips }}</template>

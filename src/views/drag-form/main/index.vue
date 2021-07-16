@@ -1,8 +1,8 @@
 <template>
   <div class="page-content">
     <ul class="form-list flex">
-      <template v-for="(item, index) in formsOptions" :key="item.id">
-        <li class="flex-center" @click="jumpMaking(item.id)">
+      <template v-for="(item, index) in formsOptions" :key="item._id">
+        <li class="flex-center" @click="jumpMaking(item._id)">
           <div class="item" v-if="!formsEditStatus[index]">
             <p>{{ item.title }}</p>
           </div>
@@ -102,7 +102,7 @@ export default defineComponent({
           // 新建默认属性
           formsOptions.value.push({
             title: status.title,
-            id: uuid(),
+            _id: uuid(),
             name: '',
             model: 'formModel',
             rules: 'formRules',
@@ -145,7 +145,7 @@ export default defineComponent({
 
     const editFormItem = (index: number) => {
       const formsValue = formsOptions.value;
-      formsEditStatus.value.map((item) => (item = false));
+      formsEditStatus.value.map(() => false);
       formsEditStatus.value[index] = true;
       cacheCurrEditName.value = formsValue[index].title!;
       nextTick(() => {

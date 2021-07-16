@@ -47,7 +47,12 @@
       <a-switch v-model:checked="currentIdFormAttr.hideRequiredMark" />
     </a-form-item>
     <a-form-item label="标签宽度">
-      <a-slider v-model:value="currentIdFormAttr.labelCol.span" :min="1" :max="10" />
+      <a-slider
+        :disabled="currentIdFormAttr.layout !== 'horizontal'"
+        v-model:value="currentIdFormAttr.labelCol.span"
+        :min="1"
+        :max="10"
+      />
     </a-form-item>
     <a-form-item label="对齐方式">
       <a-radio-group

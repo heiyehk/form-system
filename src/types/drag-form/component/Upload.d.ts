@@ -69,7 +69,7 @@ export declare interface UploadOptions {
     /**
      * 自定义文件预览逻辑
      */
-    previewFile: (file: File | Blob) => Promise<{ dataURL: string }>;
+    // previewFile: (file: File | Blob) => Promise<{ dataURL: string }>;
     /**
      * 是否展示 uploadList, 可设为一个对象，用于单独设定 showPreviewIcon 和 showRemoveIcon
      * @default ```true```

@@ -40,7 +40,7 @@
             <QuestionCircleOutlined class="label-icon" />
           </a-tooltip>
         </template>
-        <a-input v-model:value="currentIdComponentAttr.key" maxLength="20" allowClear />
+        <a-input v-model:value="currentIdComponentAttr._key" maxLength="20" allowClear />
       </a-form-item>
       <a-form-item label="必填">
         <a-switch v-model:checked="currentIdComponentAttr.required" />
@@ -95,7 +95,8 @@
             'a-Rate',
             'a-Switch',
             'a-Slider',
-            'a-DatePicker'
+            'a-DatePicker',
+            'a-Select'
           ].includes(currentIdComponentAttr.component)
         "
         label="获取焦点"
@@ -104,7 +105,7 @@
       </a-form-item>
       <a-form-item
         v-if="
-          ['a-Input', 'a-Textarea', 'a-InputPassword', 'a-DatePicker', 'a-TimePicker'].includes(
+          ['a-Input', 'a-Textarea', 'a-InputPassword', 'a-DatePicker', 'a-TimePicker', 'a-Select'].includes(
             currentIdComponentAttr.component
           )
         "
@@ -139,23 +140,31 @@
         <a-form-item label="小数点">
           <a-input v-model:value="currentIdComponentAttr.options.props.decimalSeparator" allowClear />
         </a-form-item>
-        <a-form-item label="步长">
+        <a-form-item>
+          <template #label>
+            <a-tooltip placement="left" title="每次改变步数，可以为小数">
+              <span>步长</span>
+              <QuestionCircleOutlined class="label-icon" />
+            </a-tooltip>
+          </template>
           <a-input-number v-model:value="currentIdComponentAttr.options.props.step" />
         </a-form-item>
       </template>
       <!-- Textarea -->
       <template v-if="currentIdComponentAttr.component === 'a-Textarea'">
-        <a-form-item label="自适应">
-          <a-switch v-model:checked="currentIdComponentAttr.options.props.autoSize" />
-        </a-form-item>
         <a-form-item label="展示字数">
           <a-switch v-model:checked="currentIdComponentAttr.options.props.showCount" />
+        </a-form-item>
+        <!-- TODO 自适应高度和高度调整 -->
+        <a-form-item label="自适应高度">
+          <a-switch v-model:checked="currentIdComponentAttr.options.props.autoSize" />
         </a-form-item>
         <a-form-item label="最小高度">
           <a-input-number
             v-model:value="currentIdComponentAttr.options.props.autoSize.minRows"
             maxLength="20"
             allowClear
+            :disabled="currentIdComponentAttr.options.props.autoSize"
           />
         </a-form-item>
         <a-form-item label="最大高度">
@@ -163,6 +172,7 @@
             v-model:value="currentIdComponentAttr.options.props.autoSize.maxRows"
             maxLength="20"
             allowClear
+            :disabled="currentIdComponentAttr.options.props.autoSize"
           />
         </a-form-item>
       </template>
@@ -201,7 +211,7 @@
         <a-form-item>
           <template #label>
             <a-tooltip placement="left" title="图片上传接口">
-              <span>上传图片</span>
+              <span>图传接口</span>
               <QuestionCircleOutlined class="label-icon" />
             </a-tooltip>
           </template>
@@ -292,9 +302,9 @@
             </a-tooltip>
           </template>
           <a-switch v-model:checked="currentIdComponentAttr.options.props.tooltipVisible" />
-          <a-button type="link" @click="currentIdComponentAttr.options.props.tooltipVisible = undefined"
-            >清除状态</a-button
-          >
+          <a-button type="link" @click="currentIdComponentAttr.options.props.tooltipVisible = undefined">
+            清除状态
+          </a-button>
         </a-form-item>
       </template>
       <!-- DatePicker -->
@@ -384,6 +394,7 @@
           </a-radio-group>
         </a-form-item>
       </template>
+      <!-- Upload -->
       <template v-if="currentIdComponentAttr.component === 'a-Upload'">
         <a-form-item label="文件类型">
           <a-select placeholder="请选择文件类型" v-model:value="currentIdComponentAttr.options.props.accept">
@@ -392,13 +403,19 @@
             </template>
           </a-select>
         </a-form-item>
-        <a-form-item label="文件name">
-          <a-input v-model:value="currentIdComponentAttr.options.props.name" />
+        <a-form-item>
+          <template #label>
+            <a-tooltip placement="left" title="服务端渲染时需要打开这个">
+              <span>服务端渲染</span>
+              <QuestionCircleOutlined class="label-icon" />
+            </a-tooltip>
+          </template>
+          <a-switch v-model:checked="currentIdComponentAttr.options.props.supportServerRender" />
         </a-form-item>
         <a-form-item label="上传地址">
           <a-input v-model:value="currentIdComponentAttr.options.props.action" />
         </a-form-item>
-        <a-form-item label="写代cookie">
+        <a-form-item label="携带cookie">
           <a-switch v-model:checked="currentIdComponentAttr.options.props.withCredentials" />
         </a-form-item>
         <a-form-item label="文件夹">
@@ -407,23 +424,118 @@
         <a-form-item label="多选">
           <a-switch v-model:checked="currentIdComponentAttr.options.props.multiple" />
         </a-form-item>
-        <a-form-item label="文件对话框">
+        <a-form-item>
+          <template #label>
+            <a-tooltip placement="left" title="点击打开文件对话框">
+              <span>文件对话框</span>
+              <QuestionCircleOutlined class="label-icon" />
+            </a-tooltip>
+          </template>
           <a-switch v-model:checked="currentIdComponentAttr.options.props.openFileDialogOnClick" />
+          <a-button type="link" @click="currentIdComponentAttr.options.props.openFileDialogOnClick = undefined">
+            清除状态
+          </a-button>
+        </a-form-item>
+        <a-form-item>
+          <template #label>
+            <a-tooltip placement="left" title="是否展示 uploadList, 可设为一个对象">
+              <span>文件列表</span>
+              <QuestionCircleOutlined class="label-icon" />
+            </a-tooltip>
+          </template>
+          <a-switch v-model:checked="currentIdComponentAttr.options.props.showUploadList" />
         </a-form-item>
         <a-form-item label="请求头">
-          <InputOptions oneplaceholder="key" twoplaceholder="value" />
+          <InputOptions
+            oneplaceholder="key"
+            twoplaceholder="value"
+            v-model:value="currentIdComponentAttr.options.props.headers"
+          />
         </a-form-item>
-        <a-form-item label="样式">
+        <a-form-item label="数据">
+          <InputOptions
+            oneplaceholder="key"
+            twoplaceholder="value"
+            v-model:value="currentIdComponentAttr.options.props.data"
+          />
+        </a-form-item>
+        <a-form-item>
+          <template #label>
+            <a-tooltip placement="left" title="上传的布局，按钮、多个图片垂直布局、多个图片水平布局">
+              <span>样式</span>
+              <QuestionCircleOutlined class="label-icon" />
+            </a-tooltip>
+          </template>
           <a-radio-group v-model:value="currentIdComponentAttr.options.props.listType" button-style="solid">
-            <a-radio-button value="text">文本</a-radio-button>
+            <a-radio-button value="text">按钮</a-radio-button>
             <a-radio-button value="picture">图垂直</a-radio-button>
             <a-radio-button value="picture-card">图水平</a-radio-button>
           </a-radio-group>
         </a-form-item>
-        <a-form-item label="显示列表">
-          <a-switch v-model:checked="currentIdComponentAttr.options.props.showUploadList" />
-        </a-form-item>
       </template>
+    </template>
+    <template v-if="currentIdComponentAttr.component === 'a-Select'">
+      <a-form-item>
+        <template #label>
+          <a-tooltip placement="left" title="是否在选中项后清空搜索框，只在 mode 为 multiple 或 tags 时有效。">
+            <span>清空搜索</span>
+            <QuestionCircleOutlined class="label-icon" />
+          </a-tooltip>
+        </template>
+        <a-switch v-model:checked="currentIdComponentAttr.options.props.multiple" />
+      </a-form-item>
+      <a-form-item label="空提示">
+        <a-input v-model:value="currentIdComponentAttr.options.props.notFoundContent" />
+      </a-form-item>
+      <a-form-item label="边框">
+        <a-switch v-model:checked="currentIdComponentAttr.options.props.bordered" />
+      </a-form-item>
+      <a-form-item label="启用搜索">
+        <a-switch v-model:checked="currentIdComponentAttr.options.props.showSearch" />
+      </a-form-item>
+      <a-form-item label="启用箭头">
+        <a-switch v-model:checked="currentIdComponentAttr.options.props.showArrow" />
+      </a-form-item>
+      <!-- <a-form-item label="高亮第一条">
+        <a-switch v-model:checked="currentIdComponentAttr.options.props.defaultActiveFirstOption" />
+      </a-form-item> -->
+      <a-form-item>
+        <template #label>
+          <a-tooltip placement="left" title="下拉菜单和选择器同宽">
+            <span>同宽</span>
+            <QuestionCircleOutlined class="label-icon" />
+          </a-tooltip>
+        </template>
+        <a-switch v-model:checked="currentIdComponentAttr.options.props.dropdownMatchSelectWidth" />
+      </a-form-item>
+      <a-form-item>
+        <template #label>
+          <a-tooltip placement="left" title="默认高亮的选项">
+            <span>默认高亮</span>
+            <QuestionCircleOutlined class="label-icon" />
+          </a-tooltip>
+        </template>
+        <SingleInputOptions
+          oneplaceholder="key"
+          twoplaceholder="value"
+          :double="false"
+          v-model:value="currentIdComponentAttr.options.props.firstActiveValue"
+        />
+      </a-form-item>
+      <a-form-item>
+        <template #label>
+          <a-tooltip placement="left" title="设置 Select 的模式为多选或标签">
+            <span>类型</span>
+            <QuestionCircleOutlined class="label-icon" />
+          </a-tooltip>
+        </template>
+        <a-radio-group v-model:value="currentIdComponentAttr.options.props.mode" button-style="solid">
+          <a-radio-button value="multiple">多选</a-radio-button>
+          <a-radio-button value="tags">标签</a-radio-button>
+          <a-radio-button value="combobox">单选</a-radio-button>
+        </a-radio-group>
+        <a-button type="link" @click="currentIdComponentAttr.options.props.mode = undefined">清除状态</a-button>
+      </a-form-item>
     </template>
   </a-form>
 </template>
@@ -436,20 +548,22 @@ import { QuestionCircleOutlined } from '@ant-design/icons-vue';
 import { RightFormAttrType, FormItemComponentAttr } from '@/types/drag-form/forms';
 import moment from 'moment';
 import InputOptions from '../../components/InputOptions.vue';
+import SingleInputOptions from '../../components/SingleInputOptions.vue';
 
 export default defineComponent({
   components: {
     QuestionCircleOutlined,
-    InputOptions
+    InputOptions,
+    SingleInputOptions
   },
   props: {
     makingId: String,
     selectItemId: String
   },
   setup(props) {
-    const currentIdFormAttr: RightFormAttrType = formsOptions.value.filter((item) => item.id === props.makingId)[0];
+    const currentIdFormAttr: RightFormAttrType = formsOptions.value.filter((item) => item._id === props.makingId)[0];
     let currentIdComponentAttr = computed(
-      () => currentIdFormAttr.__attr__?.filter((item) => item.id === props.selectItemId)[0] as FormItemComponentAttr
+      () => currentIdFormAttr.__attr__?.filter((item) => item._id === props.selectItemId)[0] as FormItemComponentAttr
     );
 
     const tooltipPlacement = [

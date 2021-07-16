@@ -150,7 +150,10 @@ const componentAttrOptions: AntdvComponentOptions = {
       maxlength: undefined,
       value: '',
       allowClear: true,
-      autoSize: false,
+      autoSize: {
+        minRows: 2,
+        maxRows: 4
+      },
       showCount: false,
       placeholder: '请输入内容'
     }
@@ -315,7 +318,7 @@ const componentAttrOptions: AntdvComponentOptions = {
       disabled: false,
       dropdownClassName: '',
       dropdownMatchSelectWidth: true,
-      mode: '',
+      mode: undefined,
       notFoundContent: '没有数据',
       optionFilterProp: '',
       placeholder: '请选择内容',
@@ -412,9 +415,9 @@ const componentAttrOptions: AntdvComponentOptions = {
       action: '',
       method: 'post',
       directory: false,
-      headers: {},
       listType: 'text',
-      name: 'file'
+      name: 'file',
+      showUploadList: true
     }
   },
   Divider: {

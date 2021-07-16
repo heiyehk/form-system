@@ -92,7 +92,7 @@ export declare interface SelectOptions {
     /**
      * 设置 Select 的模式为多选或标签
      */
-    mode: '' | 'multiple' | 'tags' | 'combobox';
+    mode?: 'multiple' | 'tags' | 'combobox';
     /**
      * 当下拉列表为空时显示的内容
      * @default ```	Not Found ```

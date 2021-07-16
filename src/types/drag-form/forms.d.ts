@@ -7,7 +7,7 @@ import { AntdvComponentOptions } from './component-options';
  */
 interface MakingType {
   title: string;
-  id: string;
+  _id: string;
 }
 
 /**
@@ -32,13 +32,17 @@ export declare interface FormItemComponentAttr {
    *
    * 用于model的值
    */
-  key: string;
+  _key: string;
+  /**
+   * 需要重新渲染的参数，如富文本等等
+   */
+  renderKey?: string;
   label: string;
   component: `a-${keyof AntdvComponentOptions}`;
   /**
    * 用于记录当前组件的标记
    */
-  id: string;
+  _id: string;
   /**
    * 是否必填
    */
@@ -58,7 +62,6 @@ export declare type PropsAlign = 'left' | 'center' | 'right';
  * 右侧表单属性
  */
 export declare interface RightFormAttrType {
-  [key: string]: any;
   /**
    * ---------------
    * 基础属性

@@ -23,13 +23,13 @@
         <template v-for="item in currentIdFormAttr?.__attr__" :key="item.id">
           <a-col
             class="form-item-col"
-            :class="selectItemId === item.id ? 'active-form-item' : ''"
+            :class="selectItemId === item._id ? 'active-form-item' : ''"
             span="24"
-            @click="chooseFormCol(item.id)"
+            @click="chooseFormCol(item._id)"
           >
             <div class="absolute-btns">
-              <CopyOutlined :title="`复制${item.label}`" @click.stop="copyComponentItem(item.id)" />
-              <DeleteOutlined :title="`删除${item.label}`" @click.stop="deleteComponentItem(item.id)" />
+              <CopyOutlined :title="`复制${item.label}`" @click.stop="copyComponentItem(item._id)" />
+              <DeleteOutlined :title="`删除${item.label}`" @click.stop="deleteComponentItem(item._id)" />
             </div>
             <template v-if="item.component === 'a-Divider'">
               <component :is="item.component" v-bind="item.options">{{ item.label }}</component>
@@ -40,7 +40,7 @@
                   span: item.options.wrapperColSpan ?? 24
                 }"
                 :label="item.options.label ? item.label : ''"
-                :name="item.required ? item.key : ''"
+                :name="item.required ? item._key : ''"
               >
                 <component
                   v-if="item.component === 'a-Switch'"
@@ -56,7 +56,7 @@
                   v-model:checked="item.options.props.checked"
                   :size="currentIdFormAttr.size"
                 >
-                  <a-button><UploadOutlined />上传</a-button>
+                  <UploadComponent :item="item" />
                 </component>
                 <component
                   v-else
@@ -92,10 +92,11 @@
 import { computed, defineComponent, onMounted, ref } from 'vue';
 import Sortable from 'sortablejs';
 import { Empty } from 'ant-design-vue';
-import { DeleteOutlined, CopyOutlined, UploadOutlined } from '@ant-design/icons-vue';
+import { DeleteOutlined, CopyOutlined } from '@ant-design/icons-vue';
 import { cloneDeep } from 'lodash';
 import Tinymac from '../../components/Tinymce.vue';
 import Bytemd from '../../components/Bytemd/component/v3/editor.vue';
+import UploadComponent from '../components/UploadComponent.vue';
 
 import { randomChar, uuid } from '@/utils';
 import { formsOptions } from '@/config/drag-form/reactiveFormOptions';
@@ -114,17 +115,19 @@ export default defineComponent({
     'a-Bytemd': Bytemd,
     CopyOutlined,
     DeleteOutlined,
-    UploadOutlined
+    UploadComponent
   },
   setup(props, { emit }) {
     const cacheFormRulesrules = computed(() => {
       let rules: Partial<Record<string, RuleItem[]>> = {};
       for (const item of currentIdFormAttr.__attr__) {
-        rules[item.key] = item.rules;
+        if (item.required) {
+          rules[item._key] = item.rules;
+        }
       }
       return rules;
     });
-    let currentIdFormAttr = formsOptions.value.filter((item) => item.id === props.makingId)[0];
+    let currentIdFormAttr = formsOptions.value.filter((item) => item._id === props.makingId)[0];
     // 添加部分
     const initSortable = () => {
       Sortable.create(document.querySelector('.making-content-form') as HTMLElement, {
@@ -161,7 +164,8 @@ export default defineComponent({
      * 拖拽push
      */
     const sortableSort = (event: Sortable.SortableEvent) => {
-      const { component, name } = event.item.dataset;
+      const component = event.item.dataset.component as keyof AntdvComponentOptions;
+      const label = event.item.dataset.label;
       const uuidValue = uuid();
       if (!component) return;
       /**
@@ -170,15 +174,20 @@ export default defineComponent({
        * 防止污染源数据，使用深拷贝
        */
       let attrOptions: FormItemComponentAttr = {
-        label: name!,
-        key: 'comp' + randomChar(3),
+        label: label!,
+        _key: randomChar('comp', 3),
         required: true,
         component: `a-${component}` as `a-${keyof AntdvComponentOptions}`,
-        id: uuidValue,
-        options: cloneDeep(componentAttrOptions[component as keyof AntdvComponentOptions]) as any
+        _id: uuidValue,
+        // TODO any
+        options: cloneDeep(componentAttrOptions[component]) as any
       };
       if (component !== 'Divider') {
-        attrOptions.rules = [{ required: true, message: `请输入${name}` }];
+        attrOptions.rules = [{ required: true, message: `请输入${label}` }];
+      }
+      if (component === 'Tinymce') {
+        console.log(randomChar('key'));
+        attrOptions.renderKey = randomChar('key');
       }
       // 组件渲染
       currentIdFormAttr.__attr__?.splice(event.newIndex!, 0, attrOptions);
@@ -192,7 +201,7 @@ export default defineComponent({
       emit('selectItem', id);
     };
     // 拿到当前选中组件下标
-    const getSelectItemIdIndex = (id: string) => currentIdFormAttr.__attr__.findIndex((item) => item.id === id);
+    const getSelectItemIdIndex = (id: string) => currentIdFormAttr.__attr__.findIndex((item) => item._id === id);
     /**
      * 复制组件
      *
@@ -204,14 +213,18 @@ export default defineComponent({
       const copyItemId = uuid();
       const { label, component, options, rules } = { ...currentIdFormAttr.__attr__[index] };
       const newItem = {
-        key: 'comp' + randomChar(3),
+        _key: randomChar('comp', 3),
         label,
         required: true,
-        id: copyItemId,
+        _id: copyItemId,
         component,
         options: { ...options, value: '' },
         rules
-      };
+      } as FormItemComponentAttr;
+      // 给tinymce重新生成renderKey
+      if (component === 'a-Tinymce') {
+        newItem.renderKey = randomChar('key');
+      }
       currentIdFormAttr.__attr__.splice(index + 1, 0, newItem);
     };
     // 删除组件

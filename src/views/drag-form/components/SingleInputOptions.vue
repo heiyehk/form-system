@@ -2,16 +2,8 @@
   <div class="input-options">
     <template v-for="(item, index) in arrayRes" :key="index">
       <a-row class="input-options-row">
-        <a-col :span="9">
-          <a-input :placeholder="oneplaceholder" v-model:value="item.label" />
-        </a-col>
-        <a-col :span="2">
-          <div class="segmentation-box flex-center">
-            <span class="segmentation">—</span>
-          </div>
-        </a-col>
-        <a-col :span="9">
-          <a-input :placeholder="twoplaceholder" v-model:value="item.value" />
+        <a-col :span="20">
+          <a-input :placeholder="placeholder" v-model:value="arrayRes[index]" />
         </a-col>
         <a-col :span="1"> </a-col>
         <a-col :span="2" v-if="arrayResLen - 1 === index">
@@ -34,13 +26,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, computed, watch } from 'vue';
+import { defineComponent, ref, computed, watch, PropType } from 'vue';
 import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons-vue';
-
-interface CompInputOptions {
-  label: string;
-  value: string;
-}
 
 export default defineComponent({
   components: {
@@ -50,74 +37,55 @@ export default defineComponent({
   emits: ['update:value'],
   props: {
     value: {
-      type: [Object, Array] as PropType<Record<string, any> | CompInputOptions[]>
+      type: Array as PropType<string[]>
     },
-    oneplaceholder: {
-      type: String,
-      default: '请输入内容'
-    },
-    twoplaceholder: {
+    placeholder: {
       type: String,
       default: '请输入内容'
     }
   },
   setup(props, { emit }) {
-    console.log(props.value);
-    let arrayRes = ref<CompInputOptions[]>([]);
+    let arrayRes = ref<string[]>([]);
     if (!props.value) {
-      arrayRes.value.push({
-        label: '',
-        value: ''
-      });
+      arrayRes.value.push('');
     } else {
-      if (typeof props.value === 'object') {
-        for (const key of Object.keys(props.value!)) {
-          arrayRes.value.push({
-            label: key,
-            value: (props.value as Record<string, any>)[key]
-          });
-        }
-      }
+      arrayRes.value = props.value!;
     }
     let arrayResLen = computed(() => arrayRes.value.length);
     const addItem = () => {
-      const lastArr = arrayRes.value[arrayResLen.value - 1];
-      if (lastArr.label !== '' && lastArr.value !== '') {
-        arrayRes.value.push({
-          label: '',
-          value: ''
-        });
+      const lastStr = arrayRes.value[arrayResLen.value - 1];
+      if (lastStr !== '') {
+        arrayRes.value.push('');
       }
     };
     const delItem = (index: number) => {
       arrayRes.value.splice(index, 1);
     };
     // 对象
-    const objectRes = computed(() => {
-      let obj: Record<string, any> = {};
-      for (const item of arrayRes.value) {
-        const { label, value } = item;
+    const emitRes = computed(() => {
+      let arr: (string | number | boolean | null)[] = [];
+      for (const value of arrayRes.value) {
         const charjs = ['null', 'undefined', 'false', 'true'];
         if (value && /^[0-9]*$/.test(value)) {
-          obj[label] = Number(value);
+          arr.push(Number(value));
         } else if (charjs.includes(value)) {
-          obj[label] = eval(charjs[charjs.indexOf(value)]);
+          arr.push(eval(charjs[charjs.indexOf(value)]));
         } else {
-          obj[label] = value;
+          arr.push(value);
         }
       }
-      return obj;
+      return arr;
     });
     // 数组
     watch(arrayRes.value, () => {
-      emit('update:value', objectRes.value);
+      emit('update:value', emitRes.value);
     });
     return {
       arrayRes,
       arrayResLen,
       addItem,
       delItem,
-      objectRes
+      emitRes
     };
   }
 });
