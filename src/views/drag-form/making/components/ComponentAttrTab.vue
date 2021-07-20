@@ -105,9 +105,15 @@
       </a-form-item>
       <a-form-item
         v-if="
-          ['a-Input', 'a-Textarea', 'a-InputPassword', 'a-DatePicker', 'a-TimePicker', 'a-Select'].includes(
-            currentIdComponentAttr.component
-          )
+          [
+            'a-Input',
+            'a-Textarea',
+            'a-InputPassword',
+            'a-DatePicker',
+            'a-TimePicker',
+            'a-Select',
+            'a-TreeSelect'
+          ].includes(currentIdComponentAttr.component)
         "
         label="清除图标"
       >
@@ -392,6 +398,40 @@
             <a-radio-button value="year">year</a-radio-button>
             <a-radio-button value="decade">decade</a-radio-button>
           </a-radio-group>
+        </a-form-item>
+      </template>
+      <!-- Tree -->
+      <template v-if="currentIdComponentAttr.component === 'a-TreeSelect'">
+        <a-form-item>
+          <template #label>
+            <a-tooltip placement="left" title="是否节点占据一行">
+              <span>节点一行</span>
+              <QuestionCircleOutlined class="label-icon" />
+            </a-tooltip>
+          </template>
+          <a-switch v-model:check="currentIdComponentAttr.options.props.blockNode" />
+        </a-form-item>
+        <a-form-item>
+          <template #label>
+            <a-tooltip placement="left" title="替换 treeNode 中 title,key,children 字段为 treeData 中对应的字段">
+              <span>替换key</span>
+              <QuestionCircleOutlined class="label-icon" />
+            </a-tooltip>
+          </template>
+          <InputOptions
+            oneplaceholder="key"
+            twoplaceholder="value"
+            v-model:value="currentIdComponentAttr.options.props.replaceFields"
+          />
+        </a-form-item>
+        <a-form-item>
+          <template #label>
+            <a-tooltip placement="left" title="默认展开所有树节点">
+              <span>展开节点</span>
+              <QuestionCircleOutlined class="label-icon" />
+            </a-tooltip>
+          </template>
+          <a-switch v-model:check="currentIdComponentAttr.options.props.treeDefaultExpandAll" />
         </a-form-item>
       </template>
       <!-- Upload -->

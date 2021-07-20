@@ -84,7 +84,7 @@ const parseFormItemTemplate = () => {
 
   for (const item of currentIdFormAttr.__attr__) {
     const label = item.options.label ? ` label="${item.label}` : '';
-    const name = item.required ? ` name="${item.key}"` : '';
+    const name = item.required ? ` name="${item._key}"` : '';
     const size = 'size' in currentIdFormAttr ? ` size="${currentIdFormAttr.size}"` : '';
     const modelKey = item.component === 'a-Switch' ? 'checked' : 'value';
 
@@ -99,7 +99,7 @@ const parseFormItemTemplate = () => {
         `<a-form-item${label}"${name}>` +
         // 处理组件
         `
-      <${item.component} v-model:${modelKey}="${currentIdFormAttr.model}.${item.key}"${size} ${parseTagAttr(
+      <${item.component} v-model:${modelKey}="${currentIdFormAttr.model}.${item._key}"${size} ${parseTagAttr(
           item.options.props,
           [],
           ['value', 'size', 'checked']

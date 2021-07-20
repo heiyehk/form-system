@@ -84,11 +84,11 @@ const parseFormModel = () => {
   for (const item of currentIdFormAttr.__attr__) {
     // 插入typescript类型
     if (item.component !== 'a-Divider') {
-      typescriptTypeObject[item.key] = getAccessType(item.options.props?.value).toLowerCase();
+      typescriptTypeObject[item._key] = getAccessType(item.options.props?.value).toLowerCase();
     }
     // 插入rules验证
     if (item.rules && item.component !== 'a-Divider') {
-      rulesObject[item.key] = item.rules;
+      rulesObject[item._key] = item.rules;
     }
   }
 };
