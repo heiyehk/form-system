@@ -7,9 +7,14 @@
             <p>{{ item.title }}</p>
           </div>
           <div class="item" v-if="formsEditStatus[index]" @click.stop>
-            <a-form class="add-form">
-              <a-form-item label="名称">
-                <a-input ref="itemInput" v-model:value="formsOptions[index].title" @pressEnter="onSubmit(index)" />
+            <a-form ref="formRef" class="add-form" :model="formModel" :rules="formRules">
+              <a-form-item label="名称" name="title">
+                <a-input
+                  ref="itemInput"
+                  @input="currEditInput"
+                  v-model:value="formsOptions[index].title"
+                  @pressEnter="onSubmit(index)"
+                />
               </a-form-item>
               <a-form-item style="margin-bottom: 0">
                 <a-button type="primary" @click.prevent.stop="onSubmit(index)">确认</a-button>
@@ -27,9 +32,9 @@
       </template>
       <li class="flex-center" @click="addClick">
         <div class="item" v-if="addVisible">
-          <a-form class="add-form">
-            <a-form-item label="名称" v-bind="validateInfos.title">
-              <a-input ref="nameInput" v-model:value="formProps.title" @pressEnter="onSubmit" />
+          <a-form ref="formRef" class="add-form" :model="formModel" :rules="formRules">
+            <a-form-item label="名称" name="title">
+              <a-input ref="nameInput" v-model:value="formModel.title" @pressEnter="onSubmit" />
             </a-form-item>
             <a-form-item style="margin-bottom: 0">
               <a-button type="primary" @click.prevent.stop="onSubmit">确认</a-button>
@@ -47,12 +52,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, nextTick, reactive, ref } from 'vue';
+import { defineComponent, nextTick, reactive, ref, UnwrapRef } from 'vue';
 import { FileAddOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons-vue';
-import { useForm } from '@ant-design-vue/use';
 import { uuid } from '@/utils';
 import { useRouter } from 'vue-router';
 import { formsOptions } from '@/config/drag-form/reactiveFormOptions';
+
+interface FormModelType {
+  title: string;
+}
 
 export default defineComponent({
   components: {
@@ -62,6 +70,7 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
+    const formRef = ref();
     const nameInput = ref<null | HTMLInputElement>(null);
     const itemInput = ref<null | HTMLInputElement>(null);
     const formsEditStatus = ref<boolean[]>(new Array(formsOptions.value.length).fill(false));
@@ -78,10 +87,10 @@ export default defineComponent({
     const cacheCurrEditName = ref('');
 
     // 添加部分
-    const formProps = reactive({
+    const formModel: UnwrapRef<FormModelType> = reactive({
       title: ''
     });
-    const formRule = reactive({
+    const formRules = reactive({
       title: [
         {
           required: true,
@@ -89,19 +98,21 @@ export default defineComponent({
         }
       ]
     });
-    const { resetFields, validate, validateInfos } = useForm(formProps, formRule);
-    // 新建和编辑
-    const onSubmit = async (index?: number) => {
+    /**
+     * 新建和编辑
+     */
+    const onSubmit = (index?: number) => {
       if (typeof index === 'number') {
-        formsEditStatus.value[index] = false;
+        formRef.value.validate().then(() => {
+          formsEditStatus.value[index] = false;
+          formModel.title = '';
+        });
       } else {
-        const status = await validate<typeof formProps>();
-        if (status) {
+        formRef.value.validate().then(() => {
           addVisible.value = false;
-          resetFields();
           // 新建默认属性
           formsOptions.value.push({
-            title: status.title,
+            title: formModel.title,
             _id: uuid(),
             name: '',
             model: 'formModel',
@@ -126,7 +137,8 @@ export default defineComponent({
             __attr__: []
           });
           formsEditStatus.value.splice(index!, 0, false);
-        }
+          formModel.title = '';
+        });
       }
     };
     const reset = (index?: number) => {
@@ -136,7 +148,7 @@ export default defineComponent({
         cacheCurrEditName.value = '';
       } else {
         addVisible.value = false;
-        resetFields();
+        formRef.value.resetFields();
       }
     };
     const jumpMaking = (id?: string) => {
@@ -148,9 +160,14 @@ export default defineComponent({
       formsEditStatus.value.map(() => false);
       formsEditStatus.value[index] = true;
       cacheCurrEditName.value = formsValue[index].title!;
+      formModel.title = formsValue[index].title!;
       nextTick(() => {
         itemInput.value?.focus();
       });
+    };
+    const currEditInput = (e: Event) => {
+      const value = (e.target as HTMLInputElement).value;
+      formModel.title = value;
     };
     const deleteFormItem = (index: number) => {
       formsOptions.value.splice(index, 1);
@@ -162,14 +179,16 @@ export default defineComponent({
       addClick,
       addName,
       addVisible,
-      validateInfos,
       reset,
-      formProps,
+      formRef,
+      formModel,
+      formRules,
       onSubmit,
       formsOptions,
       formsEditStatus,
       jumpMaking,
       editFormItem,
+      currEditInput,
       deleteFormItem
     };
   }

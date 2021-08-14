@@ -9,6 +9,7 @@
       ok-text="关闭"
       cancel-text="取消"
       @confirm="confirm"
+      @cancel="cancel"
       trigger="hover"
       placement="right"
       :visible="!triggerTipsStatus"
@@ -71,8 +72,11 @@ export default defineComponent({
     const triggerTipsStatus = ref<boolean>(!!localStorage.getItem('triggerTipsStatus'));
     // 关闭提示
     const confirm = () => {
-      triggerTipsStatus.value = true;
+      cancel();
       localStorage.setItem('triggerTipsStatus', '1');
+    };
+    const cancel = () => {
+      triggerTipsStatus.value = true;
     };
     // 复位
     const dbclick = () => {
@@ -84,6 +88,7 @@ export default defineComponent({
       styleComputed,
       dbclick,
       confirm,
+      cancel,
       triggerTipsStatus
     };
   }

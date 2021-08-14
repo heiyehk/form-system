@@ -25,7 +25,6 @@ export default defineComponent({
 
 <style lang="less" scoped>
 .layout-content {
-  // background-color: #fff;
   background-color: @background-sub-color;
 }
 </style>

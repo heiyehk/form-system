@@ -15,6 +15,7 @@
           :type="copyStatus === 0 ? 'primary' : 'default'"
           :class="copyStatus !== 0 ? 'button-color-green' : ''"
           @click="copyCode"
+          :disabled="!currentIdFormAttr?.__attr__?.length"
           style="margin-right: 20px"
         >
           <template #icon>
@@ -23,11 +24,15 @@
           </template>
           复制
         </a-button>
-        <a-button @click="previewCurrentMaking" style="margin-right: 20px">
+        <a-button
+          @click="previewCurrentMaking"
+          :disabled="!currentIdFormAttr?.__attr__?.length"
+          style="margin-right: 20px"
+        >
           <template #icon><LinkOutlined /></template>
           预览
         </a-button>
-        <a-button type="danger" :disabled="!currentIdFormAttr?.__attr__?.length" @click="clearCurrMaking">
+        <a-button type="primary" danger :disabled="!currentIdFormAttr?.__attr__?.length" @click="clearCurrMaking">
           <template #icon><DeleteOutlined /></template>
           清空
         </a-button>

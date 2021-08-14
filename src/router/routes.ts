@@ -3,7 +3,7 @@ import { RouteRecordRaw } from 'vue-router';
 const dragForm: Array<RouteRecordRaw> = [
   {
     path: '/drag-form',
-    component: () => import('@/views/drag-form/main/layout.vue'),
+    component: () => import('@/views/drag-form/layout/layout.vue'),
     meta: {
       title: '表单拖拽'
     },
@@ -11,7 +11,7 @@ const dragForm: Array<RouteRecordRaw> = [
     children: [
       {
         path: '/drag-form/index',
-        component: () => import('@/views/drag-form/main/index.vue')
+        component: () => import('@/views/drag-form/index/index.vue')
       },
       {
         path: '/drag-form/making/:id',
